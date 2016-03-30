@@ -28,7 +28,6 @@ namespace Scheduling
         public virtual DbSet<Passenger_Flow> Passenger_Flows { get; set; }
         public virtual DbSet<Route> Routes { get; set; }
         public virtual DbSet<Stop> Stops { get; set; }
-        public virtual DbSet<RouteStop> RouteStops { get; set; }
         public virtual DbSet<Speed> Speeds { get; set; }
     }
 }

@@ -18,7 +18,6 @@ namespace Scheduling
         public Route()
         {
             this.Passenger_Flow = new HashSet<Passenger_Flow>();
-            this.RouteStops = new HashSet<RouteStop>();
         }
     
         public System.Guid ID { get; set; }
@@ -26,7 +25,5 @@ namespace Scheduling
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Passenger_Flow> Passenger_Flow { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RouteStop> RouteStops { get; set; }
     }
 }
