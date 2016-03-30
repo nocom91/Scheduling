@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище SchedulingModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище SchedulingModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Passenger Flow">
           <Key>
             <PropertyRef Name="Direction" />
@@ -21,20 +21,6 @@
           </Key>
           <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
-        </EntityType>
-        <!--Ошибки, обнаруженные при создании:
-предупреждение 6002: В таблице или представлении "Scheduling.dbo.RouteStops" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
-        <EntityType Name="RouteStops">
-          <Key>
-            <PropertyRef Name="RouteID" />
-            <PropertyRef Name="StopID" />
-            <PropertyRef Name="OrderNumberInRoute" />
-            <PropertyRef Name="Direction" />
-          </Key>
-          <Property Name="RouteID" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="StopID" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="OrderNumberInRoute" Type="int" Nullable="false" />
-          <Property Name="Direction" Type="bit" Nullable="false" />
         </EntityType>
         <!--Ошибки, обнаруженные при создании:
 предупреждение 6002: В таблице или представлении "Scheduling.dbo.Speeds" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
@@ -83,34 +69,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_RouteStops_Routes">
-          <End Role="Routes" Type="Self.Routes" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="RouteStops" Type="Self.RouteStops" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Routes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="RouteStops">
-              <PropertyRef Name="RouteID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RouteStops_Stops">
-          <End Role="Stops" Type="Self.Stops" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="RouteStops" Type="Self.RouteStops" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stops">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="RouteStops">
-              <PropertyRef Name="StopID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Speeds_Stops">
           <End Role="Stops" Type="Self.Stops" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -129,14 +87,6 @@
           <EntitySet Name="Passenger Flow" EntityType="Self.Passenger Flow" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Routes" EntityType="Self.Routes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Stops" EntityType="Self.Stops" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RouteStops" EntityType="Self.RouteStops" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [RouteStops].[RouteID] AS [RouteID], 
-    [RouteStops].[StopID] AS [StopID], 
-    [RouteStops].[OrderNumberInRoute] AS [OrderNumberInRoute], 
-    [RouteStops].[Direction] AS [Direction]
-    FROM [dbo].[RouteStops] AS [RouteStops]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="Speeds" EntityType="Self.Speeds" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [Speeds].[Start_StopID] AS [Start_StopID], 
@@ -152,21 +102,12 @@
             <End Role="Stops" EntitySet="Stops" />
             <End Role="Passenger Flow" EntitySet="Passenger Flow" />
           </AssociationSet>
-          <AssociationSet Name="FK_RouteStops_Routes" Association="Self.FK_RouteStops_Routes">
-            <End Role="Routes" EntitySet="Routes" />
-            <End Role="RouteStops" EntitySet="RouteStops" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RouteStops_Stops" Association="Self.FK_RouteStops_Stops">
-            <End Role="Stops" EntitySet="Stops" />
-            <End Role="RouteStops" EntitySet="RouteStops" />
-          </AssociationSet>
           <AssociationSet Name="FK_Speeds_Stops" Association="Self.FK_Speeds_Stops">
             <End Role="Stops" EntitySet="Stops" />
             <End Role="Speeds" EntitySet="Speeds" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SchedulingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -189,7 +130,6 @@
           <Property Name="ID" Type="Guid" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Passenger_Flow" Relationship="Self.FK_Passenger_Flow_Routes" FromRole="Routes" ToRole="Passenger_Flow" />
-          <NavigationProperty Name="RouteStops" Relationship="Self.FK_RouteStops_Routes" FromRole="Routes" ToRole="RouteStops" />
         </EntityType>
         <EntityType Name="Stop">
           <Key>
@@ -198,22 +138,7 @@
           <Property Name="ID" Type="Guid" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Passenger_Flow" Relationship="Self.FK_Passenger_Flow_Stops" FromRole="Stops" ToRole="Passenger_Flow" />
-          <NavigationProperty Name="RouteStops" Relationship="Self.FK_RouteStops_Stops" FromRole="Stops" ToRole="RouteStops" />
           <NavigationProperty Name="Speeds" Relationship="Self.FK_Speeds_Stops" FromRole="Stops" ToRole="Speeds" />
-        </EntityType>
-        <EntityType Name="RouteStop">
-          <Key>
-            <PropertyRef Name="RouteID" />
-            <PropertyRef Name="StopID" />
-            <PropertyRef Name="OrderNumberInRoute" />
-            <PropertyRef Name="Direction" />
-          </Key>
-          <Property Name="RouteID" Type="Guid" Nullable="false" />
-          <Property Name="StopID" Type="Guid" Nullable="false" />
-          <Property Name="OrderNumberInRoute" Type="Int32" Nullable="false" />
-          <Property Name="Direction" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Route" Relationship="Self.FK_RouteStops_Routes" FromRole="RouteStops" ToRole="Routes" />
-          <NavigationProperty Name="Stop" Relationship="Self.FK_RouteStops_Stops" FromRole="RouteStops" ToRole="Stops" />
         </EntityType>
         <EntityType Name="Speed">
           <Key>
@@ -254,34 +179,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_RouteStops_Routes">
-          <End Role="Routes" Type="Self.Route" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="RouteStops" Type="Self.RouteStop" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Routes">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="RouteStops">
-              <PropertyRef Name="RouteID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RouteStops_Stops">
-          <End Role="Stops" Type="Self.Stop" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="RouteStops" Type="Self.RouteStop" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stops">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="RouteStops">
-              <PropertyRef Name="StopID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Speeds_Stops">
           <End Role="Stops" Type="Self.Stop" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -300,7 +197,6 @@
           <EntitySet Name="Passenger_Flows" EntityType="Self.Passenger_Flow" />
           <EntitySet Name="Routes" EntityType="Self.Route" />
           <EntitySet Name="Stops" EntityType="Self.Stop" />
-          <EntitySet Name="RouteStops" EntityType="Self.RouteStop" />
           <EntitySet Name="Speeds" EntityType="Self.Speed" />
           <AssociationSet Name="FK_Passenger_Flow_Routes" Association="Self.FK_Passenger_Flow_Routes">
             <End Role="Routes" EntitySet="Routes" />
@@ -309,14 +205,6 @@
           <AssociationSet Name="FK_Passenger_Flow_Stops" Association="Self.FK_Passenger_Flow_Stops">
             <End Role="Stops" EntitySet="Stops" />
             <End Role="Passenger_Flow" EntitySet="Passenger_Flows" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RouteStops_Routes" Association="Self.FK_RouteStops_Routes">
-            <End Role="Routes" EntitySet="Routes" />
-            <End Role="RouteStops" EntitySet="RouteStops" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RouteStops_Stops" Association="Self.FK_RouteStops_Stops">
-            <End Role="Stops" EntitySet="Stops" />
-            <End Role="RouteStops" EntitySet="RouteStops" />
           </AssociationSet>
           <AssociationSet Name="FK_Speeds_Stops" Association="Self.FK_Speeds_Stops">
             <End Role="Stops" EntitySet="Stops" />
@@ -353,16 +241,6 @@
               <MappingFragment StoreEntitySet="Stops">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RouteStops">
-            <EntityTypeMapping TypeName="SchedulingModel.RouteStop">
-              <MappingFragment StoreEntitySet="RouteStops">
-                <ScalarProperty Name="RouteID" ColumnName="RouteID" />
-                <ScalarProperty Name="StopID" ColumnName="StopID" />
-                <ScalarProperty Name="OrderNumberInRoute" ColumnName="OrderNumberInRoute" />
-                <ScalarProperty Name="Direction" ColumnName="Direction" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

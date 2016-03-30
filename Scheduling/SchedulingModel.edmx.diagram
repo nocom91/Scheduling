@@ -8,12 +8,9 @@
         <EntityTypeShape EntityType="SchedulingModel.Passenger_Flow" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
         <EntityTypeShape EntityType="SchedulingModel.Route" Width="1.5" PointX="0.75" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="SchedulingModel.Stop" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchedulingModel.RouteStop" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="SchedulingModel.Speed" Width="1.5" PointX="2.625" PointY="6.875" IsExpanded="true" />
         <AssociationConnector Association="SchedulingModel.FK_Passenger_Flow_Routes" ManuallyRouted="false" />
         <AssociationConnector Association="SchedulingModel.FK_Passenger_Flow_Stops" ManuallyRouted="false" />
-        <AssociationConnector Association="SchedulingModel.FK_RouteStops_Routes" ManuallyRouted="false" />
-        <AssociationConnector Association="SchedulingModel.FK_RouteStops_Stops" ManuallyRouted="false" />
         <AssociationConnector Association="SchedulingModel.FK_Speeds_Stops" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
