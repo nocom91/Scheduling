@@ -12,5 +12,6 @@ namespace Scheduling
         public int PassengersInside { get; set; }
         public int Number { get; set; }
         public double NextTime { get; set; }
+        public int NextStation { get; set; }
     }
 }
