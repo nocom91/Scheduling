@@ -38,13 +38,13 @@ namespace Scheduling
         {
             timeEnd = (int)(hoursNumber * 60);
             timeStart = 0;
-            stopNumber = 29;
+            stopNumber = 6;
             routeNumber = 1;
             amountOfPossibleIntervals = 9;
             possibleIntervals = new double[routeNumber, stopNumber - 1, amountOfPossibleIntervals];
             timeOpt = new double[routeNumber, stopNumber - 1];
             variation = 0.2;
-            departureTime = new int[10];
+            departureTime = new int[7];
             buses = new List<Bus>();
             peopleAmount = new int[timeEnd, stopNumber];
             peopleAmountOut = new int[timeEnd, stopNumber];
@@ -56,13 +56,19 @@ namespace Scheduling
         {
             for (int i = 0; i < stopNumber - 1; i++)
             {
-                timeOpt[routeNumber - 1, i] = 3; //Задаем оптимальный интервал - 3 минуты
+                timeOpt[routeNumber - 1, i] = 1.5; //Задаем оптимальный интервал - 1,5 минуты
                 for (int j = 0; j < amountOfPossibleIntervals; j++)
                 {
                     possibleIntervals[routeNumber-1, i, j] = timeOpt[routeNumber - 1, i] * (1 - variation) +
                         j * 2 * variation * timeOpt[routeNumber - 1, i] / amountOfPossibleIntervals;
                 }
             }
+        }
+
+        public static void InitializeDepartureTime()
+        {
+            for (int i = 0; i < 7; i++)
+                departureTime[i] = i * 10;
         }
 
         //Инициализируется массив, отвечающий за количество человек, заходящих в ТС в каждый момент времени, на каждой остановке
@@ -78,7 +84,7 @@ namespace Scheduling
         //Инициализируются феромоны. Изначально пассажиры не собраны и феромоны не отложены
         public static void InitializeFeromons()
         {
-            for (int i = 0; i < vehicleNumber; i++)
+            for (int i = 0; i < stopNumber; i++)
                 feromons[routeNumber - 1, i, timeStart] = 0;
         }
 

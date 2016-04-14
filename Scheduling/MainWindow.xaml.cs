@@ -64,13 +64,13 @@ namespace Scheduling
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            AntColonyClass.feromonVelocity = 0;
-            AntColonyClass.feromonWeight = 0;
+            AntColonyClass.feromonVelocity = 0.2;
+            AntColonyClass.feromonWeight = 3;
             AntColonyClass.visionWeight = 2;
-            AntColonyClass.hoursNumber = 10;
-            AntColonyClass.passengersSpeed = 5;
-            AntColonyClass.passengersSpeedOut = 2;
-            AntColonyClass.vehicleNumber = 29;
+            AntColonyClass.hoursNumber = 1;
+            AntColonyClass.passengersSpeed = 2;
+            AntColonyClass.passengersSpeedOut = 1;
+            AntColonyClass.vehicleNumber = 7;
             AntColonyClass.InitializeVariables();
             AntColonyClass.InitializeIntervals();
             AntColonyClass.InitializePeopleInBus();
