@@ -6,49 +6,67 @@ using System.Threading.Tasks;
 
 namespace Scheduling
 {
-    public static class AntColonyClass
+    public class AntColonyClass
     {
-        static double feromonVelocity { get; set; }        //Скорость испарения феромона
-        static double feromonWeight { get; set; }   //Весовой коэффициент для феромона
-        static double visionWeight { get; set; } //Весовой коэффициент для видимости
-        static double hoursNumber { get; set; } //Временной участок в часах
-        static double passengersSpeed { get; set; } //Скорость наполнения остановок, чел./час (чел./мин.)
-        static double passengersSpeedOut { get; set; }//Скорость выхода пассажиров из ТС, чел./час (чел./мин.)
-        private static int passengersAll;  //Общее количество перевезенных пассажиров
-        private static int timeStart = 0;  //Момент начала работы ТС
-        private static int timeEnd = (int)(hoursNumber * 60);  //ТС ездят 10 часов
-        private static int stopNumber = 29; //Количество остановок на маршруте
-        private static int routeNumber = 1; //Количество маршрутов для рассмотрения 
-        private static int amountOfPossibleIntervals = 9; //Количество возможных вариантов интервалов
-        private static double[,,] possibleIntervals = new double[routeNumber, stopNumber - 1, amountOfPossibleIntervals];
-        private static double[,] timeOpt = new double[routeNumber, stopNumber - 1];
-        private static double variation = 0.2; //Отклонение времени движения от оптимального
-        private static int[] departureTime { get; set; } //Массив моментов выхода ТС с начальной остановки
-        private static List<Bus> buses = new List<Bus>(); //Список автобусов, работающих на маршруте
+        public static double feromonVelocity { get; set; }  //Скорость испарения феромона
+        public static double feromonWeight { get; set; }   //Весовой коэффициент для феромона
+        public static double visionWeight { get; set; } //весовой коэффициент для видимости
+        public static double hoursNumber { get; set; } //временной участок в часах
+        public static double passengersSpeed { get; set; } //скорость наполнения остановок, чел./час (чел./мин.)
+        public static double passengersSpeedOut { get; set; }//скорость выхода пассажиров из тс, чел./час (чел./мин.)
+        private static int passengersAll { get; set; }  //общее количество перевезенных пассажиров
+        private static int timeStart;  //Момент начала работы ТС
+        private static int timeEnd;  //ТС ездят N часов
+        private static int stopNumber; //Количество остановок на маршруте
+        private static int routeNumber; //Количество маршрутов для рассмотрения 
+        private static int amountOfPossibleIntervals; //Количество возможных вариантов интервалов
+        private static double[,,] possibleIntervals;
+        private static double[,] timeOpt;
+        private static double variation; //Отклонение времени движения от оптимального
+        private static int[] departureTime;//Массив моментов выхода ТС с начальной остановки
+        private static List<Bus> buses; //Список автобусов, работающих на маршруте
         //Количество людей, заходящих на остановки в каждый момент времени
-        private static int[,] peopleAmount = new int[timeEnd, stopNumber];
+        private static int[,] peopleAmount;
         //Количество выходящих на остановках людей
-        private static int[,] peopleAmountOut = new int[timeEnd, stopNumber];
-        private static double[,] timeTable = new double[departureTime.Length, stopNumber]; //Расписание
+        private static int[,] peopleAmountOut;
+        private static double[,] timeTable; //Расписание
         //Количество феромона на остоновках в каждый момент времени
-        private static double[,,] feromons = new double[routeNumber, stopNumber, timeEnd];
-        static int vehicleNumber { get; set; }
+        private static double[,,] feromons;
+        public static int vehicleNumber { get; set; }
+
+        public static void InitializeVariables()
+        {
+            timeEnd = (int)(hoursNumber * 60);
+            timeStart = 0;
+            stopNumber = 29;
+            routeNumber = 1;
+            amountOfPossibleIntervals = 9;
+            possibleIntervals = new double[routeNumber, stopNumber - 1, amountOfPossibleIntervals];
+            timeOpt = new double[routeNumber, stopNumber - 1];
+            variation = 0.2;
+            departureTime = new int[10];
+            buses = new List<Bus>();
+            peopleAmount = new int[timeEnd, stopNumber];
+            peopleAmountOut = new int[timeEnd, stopNumber];
+            timeTable = new double[departureTime.Length, stopNumber];
+            feromons = new double[routeNumber, stopNumber, timeEnd];
+        }
         //Инициализируются массивы, описывающие оптимальные интервалы и возможные интервалы
-        static void InitializeIntervals()
+        public static void InitializeIntervals()
         {
             for (int i = 0; i < stopNumber - 1; i++)
             {
                 timeOpt[routeNumber - 1, i] = 3; //Задаем оптимальный интервал - 3 минуты
                 for (int j = 0; j < amountOfPossibleIntervals; j++)
                 {
-                    possibleIntervals[routeNumber, i, j] = timeOpt[routeNumber - 1, i] * (1 - variation) +
+                    possibleIntervals[routeNumber-1, i, j] = timeOpt[routeNumber - 1, i] * (1 - variation) +
                         j * 2 * variation * timeOpt[routeNumber - 1, i] / amountOfPossibleIntervals;
                 }
             }
         }
 
         //Инициализируется массив, отвечающий за количество человек, заходящих в ТС в каждый момент времени, на каждой остановке
-        static void InitializePeopleInBus()
+        public static void InitializePeopleInBus()
         {
             for (int i = 0; i < timeEnd; i++)
                 for (int j = 0; j < stopNumber; j++)
@@ -58,18 +76,18 @@ namespace Scheduling
                 }
         }
         //Инициализируются феромоны. Изначально пассажиры не собраны и феромоны не отложены
-        static void InitializeFeromons()
+        public static void InitializeFeromons()
         {
             for (int i = 0; i < vehicleNumber; i++)
                 feromons[routeNumber - 1, i, timeStart] = 0;
         }
 
-        static double GetFeromoneAtTime(double startF, double interval)
+        private static double GetFeromoneAtTime(double startF, double interval)
         {
             return startF * Math.Pow(1 - feromonVelocity, interval);
         }
 
-        static void StartBuses()
+        public static void StartBuses()
         {
             for (int time = timeStart; time < timeEnd; time++)
             {
@@ -95,7 +113,7 @@ namespace Scheduling
                         buses.Add(bus);
                     }
                 }
-                for (int k=0; k<buses.Count; k++)
+                for (int k = 0; k < buses.Count; k++)
                 {
                     var bus = buses[k];
                     if (time == (int)Math.Round(bus.NextTime)) //Автобус прибыл на остановку
@@ -128,24 +146,52 @@ namespace Scheduling
                         {
                             var possibility = new double[amountOfPossibleIntervals]; //Вероятность поехать с другим интервалом
                             double sum = 0;
+                            //Массив текущих интервалов
                             var currentInterval = new double[amountOfPossibleIntervals];
+                            //Массив видимостей
                             var visibility = new double[amountOfPossibleIntervals];
+                            //Массив феромонов
                             var feromone = new double[amountOfPossibleIntervals];
+                            //Максимальная вероятность
                             double possibilityMax = 0;
-                            double intervalMax = timeOpt[routeNumber-1, bus.NextStation-1];
+                            //Максимальный интервал. По умолчанию равен оптимальному
+                            double intervalMax = timeOpt[routeNumber - 1, bus.NextStation - 1];
                             for (int interval = 0; interval < amountOfPossibleIntervals; interval++)
                             {
+                                //Берется текущий интервал
                                 currentInterval[interval] = possibleIntervals[routeNumber - 1, bus.NextStation - 1, interval];
                                 if (Math.Abs(currentInterval[interval] - timeOpt[routeNumber - 1, bus.NextStation - 1]) <= 0.1)
+                                    //Зачем прибавлять 0,1?!
                                     currentInterval[interval] = timeOpt[routeNumber - 1, bus.NextStation - 1] + 0.1;
-                                visibility[interval] = Math.Pow(1/Math.Abs(timeOpt[routeNumber-1, bus.NextStation-1]-
+                                //Расчитываем видимость для каждого интервала
+                                visibility[interval] = Math.Pow(1 / Math.Abs(timeOpt[routeNumber - 1, bus.NextStation - 1] -
                                     currentInterval[interval]), visionWeight);
-                                feromone[interval] = GetFeromoneAtTime(feromons[routeNumber-1, bus.NextStation,time], currentInterval[interval]);
+                                //Считаем феромоны
+                                feromone[interval] = GetFeromoneAtTime(feromons[routeNumber - 1, bus.NextStation, time], currentInterval[interval]);
+                                //Находим сумму
                                 sum += visibility[interval] * Math.Pow(feromone[interval], feromonWeight);
                             }
-                            
-                            //for(int interval =0; inter)
+
+                            for (int interval = 0; interval < amountOfPossibleIntervals; interval++)
+                            {
+                                //Расчитываем вероятность для каждого интервала
+                                possibility[interval] = visibility[interval] * Math.Pow(feromone[interval],
+                                    feromonWeight) / sum;
+                                //Находим интервал с максимальной вероятностью и запоминаем
+                                if (possibility[interval] > possibilityMax)
+                                {
+                                    possibilityMax = possibility[interval];
+                                    intervalMax = possibleIntervals[routeNumber - 1, bus.NextStation - 1,
+                                        interval];
+                                }
+                            }
+
+                            if ((new Random()).NextDouble() <= possibilityMax)
+                                bus.NextTime = time + intervalMax;
+                            else
+                                bus.NextTime = time + timeOpt[routeNumber - 1, bus.NextStation - 1];
                         }
+                        timeTable[bus.Number - 1, bus.NextStation - 1] = bus.NextTime;
 
                     }
                 }
