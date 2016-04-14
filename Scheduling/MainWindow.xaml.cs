@@ -38,18 +38,44 @@ namespace Scheduling
             //};
             //foreach(var stop in stops)
             //    dbContext.Stops.Add(new Stop() { ID = Guid.NewGuid(), Name = stop});
-            var route = dbContext.Routes.First();
-            var stops = dbContext.Stops.ToList();
-            foreach (var stop in stops)
-            {
-                dbContext.RouteStops.Add(new RouteStop()
-                {
-                    StopID = stop.ID,
-                    RouteID = route.ID,
-                    Direction = false
-                });
-            }
-            dbContext.SaveChanges();
+            //var route = dbContext.Routes.First();
+            //var stops = dbContext.Stops.ToList();
+            //foreach (var stop in stops)
+            //{
+            //    dbContext.RouteStops.Add(new RouteStop()
+            //    {
+            //        StopID = stop.ID,
+            //        RouteID = route.ID,
+            //        Direction = false
+            //    });
+            //}
+            ////dbContext.SaveChanges();
+            //AntColonyClass.feromonVelocity = 0.2;
+            //AntColonyClass.feromonWeight = 2;
+            //AntColonyClass.visionWeight = 2;
+            //AntColonyClass.hoursNumber = 10;
+            //AntColonyClass.vehicleNumber = 29;
+            //AntColonyClass.passengersSpeed = 5;
+            //AntColonyClass.passengersSpeedOut = 2;
+            //AntColonyClass.InitializeFeromons();
+            //AntColonyClass.InitializeIntervals();
+            //AntColonyClass.InitializePeopleInBus();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            AntColonyClass.feromonVelocity = 0;
+            AntColonyClass.feromonWeight = 0;
+            AntColonyClass.visionWeight = 2;
+            AntColonyClass.hoursNumber = 10;
+            AntColonyClass.passengersSpeed = 5;
+            AntColonyClass.passengersSpeedOut = 2;
+            AntColonyClass.vehicleNumber = 29;
+            AntColonyClass.InitializeVariables();
+            AntColonyClass.InitializeIntervals();
+            AntColonyClass.InitializePeopleInBus();
+            AntColonyClass.InitializeFeromons();
+            AntColonyClass.StartBuses();
         }
     }
 }
