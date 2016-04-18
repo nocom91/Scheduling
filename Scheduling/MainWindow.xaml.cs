@@ -73,6 +73,7 @@ namespace Scheduling
             AntColonyClass.vehicleNumber = 7;
             AntColonyClass.InitializeVariables();
             AntColonyClass.InitializeIntervals();
+            AntColonyClass.InitializeDepartureTime();
             AntColonyClass.InitializePeopleInBus();
             AntColonyClass.InitializeFeromons();
             AntColonyClass.StartBuses();

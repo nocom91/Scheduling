@@ -116,6 +116,7 @@ namespace Scheduling
                             NextTime = departureTime[i] + timeOpt[0, 1],
                             Capacity = 42
                         };
+                        timeTable[bus.Number - 1, bus.NextStation - 1] = bus.NextTime;                        
                         buses.Add(bus);
                     }
                 }

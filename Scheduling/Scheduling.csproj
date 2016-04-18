@@ -67,6 +67,7 @@
     </ApplicationDefinition>
     <Compile Include="AntColonyClass.cs" />
     <Compile Include="Bus.cs" />
+    <Compile Include="KeySector.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Passenger_Flow.cs">
       <DependentUpon>SchedulingModel.tt</DependentUpon>
