@@ -9,20 +9,26 @@ namespace Scheduling
     public class KeySector
     {
         private static int capacity = 36; //Номинальная вместимость ПАЗ-3205
-        public static int Q_in { get; set; } //Количество вошедших пассажиров
-        public static int Q_out { get; set; } //Количество вышедших пассажиров
-        public static int WorkingHouse { get; set; } // Оборотное время маршрута
-        public static int Interval { get; set; } //Предполагаемый интервал выхода
+        public int Q_in; //Количество вошедших пассажиров
+        public int Q_out;//Количество вышедших пассажиров
+        public int WorkingHouse; // Оборотное время маршрута
+        public int Interval;//Предполагаемый интервал выхода
 
-
-        private static double BetaCoefficient()
+        public KeySector(int qin, int qout, int workingh, int interval)
         {
-            return (double)(Q_in - Q_out) / capacity;
+
         }
 
-        public static int BusNumber()
+
+        private double BetaCoefficient()
         {
-            return (int)(WorkingHouse * BetaCoefficient()) / Interval;
+            var beta = (double)(this.Q_in - this.Q_out) / capacity;
+            return beta;
+        }
+
+        public int BusNumber()
+        {
+            return (int)(this.WorkingHouse * BetaCoefficient()) / this.Interval;
         }
     }
 }
