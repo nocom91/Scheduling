@@ -17,15 +17,16 @@ namespace Scheduling
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Stop()
         {
-            this.Passenger_Flow = new HashSet<Passenger_Flow>();
             this.Speeds = new HashSet<Speed>();
         }
     
-        public System.Guid ID { get; set; }
+        public System.Guid GUID_ID { get; set; }
         public string Name { get; set; }
+        public System.Guid Route_ID { get; set; }
+        public int ID { get; set; }
+        public Nullable<int> Distance { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Passenger_Flow> Passenger_Flow { get; set; }
+        public virtual Route Route { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Speed> Speeds { get; set; }
     }

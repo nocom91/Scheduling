@@ -7,7 +7,10 @@
     <Schema Namespace="Хранилище SchedulingModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Passenger Flow">
           <Key>
+            <PropertyRef Name="StopID" />
+            <PropertyRef Name="RouteID" />
             <PropertyRef Name="Direction" />
+            <PropertyRef Name="PeriodOfTime" />
           </Key>
           <Property Name="StopID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="RouteID" Type="uniqueidentifier" Nullable="false" />
@@ -22,24 +25,26 @@
           <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <!--Ошибки, обнаруженные при создании:
-предупреждение 6002: В таблице или представлении "Scheduling.dbo.Speeds" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
         <EntityType Name="Speeds">
           <Key>
             <PropertyRef Name="Start_StopID" />
             <PropertyRef Name="PeriodOfTime" />
-            <PropertyRef Name="Speed" />
+            <PropertyRef Name="Direction" />
           </Key>
           <Property Name="Start_StopID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="PeriodOfTime" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Speed" Type="float" Nullable="false" />
+          <Property Name="VehicleSpeed" Type="float" Nullable="false" />
+          <Property Name="Direction" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Stops">
           <Key>
-            <PropertyRef Name="ID" />
+            <PropertyRef Name="GUID_ID" />
           </Key>
-          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="GUID_ID" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Route_ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Distance" Type="int" />
         </EntityType>
         <Association Name="FK_Passenger Flow_Routes">
           <End Role="Routes" Type="Self.Routes" Multiplicity="1">
@@ -55,109 +60,148 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Passenger Flow_Stops">
-          <End Role="Stops" Type="Self.Stops" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Passenger Flow" Type="Self.Passenger Flow" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stops">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Passenger Flow">
-              <PropertyRef Name="StopID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Speeds_Stops">
-          <End Role="Stops" Type="Self.Stops" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Stops" Type="Self.Stops" Multiplicity="1" />
           <End Role="Speeds" Type="Self.Speeds" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Stops">
-              <PropertyRef Name="ID" />
+              <PropertyRef Name="GUID_ID" />
             </Principal>
             <Dependent Role="Speeds">
               <PropertyRef Name="Start_StopID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Stops_Routes">
+          <End Role="Routes" Type="Self.Routes" Multiplicity="1" />
+          <End Role="Stops" Type="Self.Stops" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Routes">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Stops">
+              <PropertyRef Name="Route_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="Хранилище SchedulingModelContainer">
           <EntitySet Name="Passenger Flow" EntityType="Self.Passenger Flow" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Routes" EntityType="Self.Routes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Speeds" EntityType="Self.Speeds" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Stops" EntityType="Self.Stops" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Speeds" EntityType="Self.Speeds" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [Speeds].[Start_StopID] AS [Start_StopID], 
-    [Speeds].[PeriodOfTime] AS [PeriodOfTime], 
-    [Speeds].[Speed] AS [Speed]
-    FROM [dbo].[Speeds] AS [Speeds]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_Passenger Flow_Routes" Association="Self.FK_Passenger Flow_Routes">
             <End Role="Routes" EntitySet="Routes" />
-            <End Role="Passenger Flow" EntitySet="Passenger Flow" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Passenger Flow_Stops" Association="Self.FK_Passenger Flow_Stops">
-            <End Role="Stops" EntitySet="Stops" />
             <End Role="Passenger Flow" EntitySet="Passenger Flow" />
           </AssociationSet>
           <AssociationSet Name="FK_Speeds_Stops" Association="Self.FK_Speeds_Stops">
             <End Role="Stops" EntitySet="Stops" />
             <End Role="Speeds" EntitySet="Speeds" />
           </AssociationSet>
+          <AssociationSet Name="FK_Stops_Routes" Association="Self.FK_Stops_Routes">
+            <End Role="Routes" EntitySet="Routes" />
+            <End Role="Stops" EntitySet="Stops" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SchedulingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Passenger_Flow">
-          <Key>
-            <PropertyRef Name="Direction" />
-          </Key>
-          <Property Name="StopID" Type="Guid" Nullable="false" />
-          <Property Name="RouteID" Type="Guid" Nullable="false" />
-          <Property Name="Direction" Type="Boolean" Nullable="false" />
-          <Property Name="PeriodOfTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Quantity" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Route" Relationship="Self.FK_Passenger_Flow_Routes" FromRole="Passenger_Flow" ToRole="Routes" />
-          <NavigationProperty Name="Stop" Relationship="Self.FK_Passenger_Flow_Stops" FromRole="Passenger_Flow" ToRole="Stops" />
-        </EntityType>
         <EntityType Name="Route">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Guid" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Passenger_Flow" Relationship="Self.FK_Passenger_Flow_Routes" FromRole="Routes" ToRole="Passenger_Flow" />
+          <NavigationProperty Name="Stops" Relationship="SchedulingModel.FK_Stops_Routes" FromRole="Route" ToRole="Stop" />
+          <NavigationProperty Name="Passenger_Flow" Relationship="SchedulingModel.FK_Passenger_Flow_Routes" FromRole="Route" ToRole="Passenger_Flow" />
         </EntityType>
-        <EntityType Name="Stop">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Passenger_Flow" Relationship="Self.FK_Passenger_Flow_Stops" FromRole="Stops" ToRole="Passenger_Flow" />
-          <NavigationProperty Name="Speeds" Relationship="Self.FK_Speeds_Stops" FromRole="Stops" ToRole="Speeds" />
-        </EntityType>
+        <EntityContainer Name="SchedulingEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Routes" EntityType="Self.Route" />
+          <EntitySet Name="Speeds" EntityType="SchedulingModel.Speed" />
+          <EntitySet Name="Stops" EntityType="SchedulingModel.Stop" />
+          <AssociationSet Name="FK_Stops_Routes" Association="SchedulingModel.FK_Stops_Routes">
+            <End Role="Route" EntitySet="Routes" />
+            <End Role="Stop" EntitySet="Stops" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Speeds_Stops" Association="SchedulingModel.FK_Speeds_Stops">
+            <End Role="Stop" EntitySet="Stops" />
+            <End Role="Speed" EntitySet="Speeds" />
+          </AssociationSet>
+          <EntitySet Name="Passenger_Flows" EntityType="SchedulingModel.Passenger_Flow" />
+          <AssociationSet Name="FK_Passenger_Flow_Routes" Association="SchedulingModel.FK_Passenger_Flow_Routes">
+            <End Role="Route" EntitySet="Routes" />
+            <End Role="Passenger_Flow" EntitySet="Passenger_Flows" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="Speed">
           <Key>
             <PropertyRef Name="Start_StopID" />
             <PropertyRef Name="PeriodOfTime" />
-            <PropertyRef Name="Speed1" />
+            <PropertyRef Name="Direction" />
           </Key>
           <Property Name="Start_StopID" Type="Guid" Nullable="false" />
-          <Property Name="PeriodOfTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Speed1" Type="Double" Nullable="false" />
-          <NavigationProperty Name="Stop" Relationship="Self.FK_Speeds_Stops" FromRole="Speeds" ToRole="Stops" />
+          <Property Name="PeriodOfTime" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Stop" Relationship="SchedulingModel.FK_Speeds_Stops" FromRole="Speed" ToRole="Stop" />
+          <Property Name="Direction" Type="Boolean" Nullable="false" />
+          <Property Name="VehicleSpeed" Type="Double" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Stop">
+          <Key>
+            <PropertyRef Name="GUID_ID" />
+          </Key>
+          <Property Name="GUID_ID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Route_ID" Type="Guid" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Route" Relationship="SchedulingModel.FK_Stops_Routes" FromRole="Stop" ToRole="Route" />
+          <NavigationProperty Name="Speeds" Relationship="SchedulingModel.FK_Speeds_Stops" FromRole="Stop" ToRole="Speed" />
+          <Property Name="Distance" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_Stops_Routes">
+          <End Type="SchedulingModel.Route" Role="Route" Multiplicity="1" />
+          <End Type="SchedulingModel.Stop" Role="Stop" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Stop">
+              <PropertyRef Name="Route_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Speeds_Stops">
+          <End Type="SchedulingModel.Stop" Role="Stop" Multiplicity="1" />
+          <End Type="SchedulingModel.Speed" Role="Speed" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stop">
+              <PropertyRef Name="GUID_ID" />
+            </Principal>
+            <Dependent Role="Speed">
+              <PropertyRef Name="Start_StopID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Passenger_Flow">
+          <Key>
+            <PropertyRef Name="StopID" />
+            <PropertyRef Name="RouteID" />
+            <PropertyRef Name="Direction" />
+            <PropertyRef Name="PeriodOfTime" />
+          </Key>
+          <Property Name="StopID" Type="Guid" Nullable="false" />
+          <Property Name="RouteID" Type="Guid" Nullable="false" />
+          <Property Name="Direction" Type="Boolean" Nullable="false" />
+          <Property Name="PeriodOfTime" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Route" Relationship="SchedulingModel.FK_Passenger_Flow_Routes" FromRole="Passenger_Flow" ToRole="Route" />
         </EntityType>
         <Association Name="FK_Passenger_Flow_Routes">
-          <End Role="Routes" Type="Self.Route" Multiplicity="1">
+          <End Type="SchedulingModel.Route" Role="Route" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Passenger_Flow" Type="Self.Passenger_Flow" Multiplicity="*" />
+          <End Type="SchedulingModel.Passenger_Flow" Role="Passenger_Flow" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Routes">
+            <Principal Role="Route">
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Passenger_Flow">
@@ -165,69 +209,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Passenger_Flow_Stops">
-          <End Role="Stops" Type="Self.Stop" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Passenger_Flow" Type="Self.Passenger_Flow" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stops">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Passenger_Flow">
-              <PropertyRef Name="StopID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Speeds_Stops">
-          <End Role="Stops" Type="Self.Stop" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Speeds" Type="Self.Speed" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Stops">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Speeds">
-              <PropertyRef Name="Start_StopID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="SchedulingEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Passenger_Flows" EntityType="Self.Passenger_Flow" />
-          <EntitySet Name="Routes" EntityType="Self.Route" />
-          <EntitySet Name="Stops" EntityType="Self.Stop" />
-          <EntitySet Name="Speeds" EntityType="Self.Speed" />
-          <AssociationSet Name="FK_Passenger_Flow_Routes" Association="Self.FK_Passenger_Flow_Routes">
-            <End Role="Routes" EntitySet="Routes" />
-            <End Role="Passenger_Flow" EntitySet="Passenger_Flows" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Passenger_Flow_Stops" Association="Self.FK_Passenger_Flow_Stops">
-            <End Role="Stops" EntitySet="Stops" />
-            <End Role="Passenger_Flow" EntitySet="Passenger_Flows" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Speeds_Stops" Association="Self.FK_Speeds_Stops">
-            <End Role="Stops" EntitySet="Stops" />
-            <End Role="Speeds" EntitySet="Speeds" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="Хранилище SchedulingModelContainer" CdmEntityContainer="SchedulingEntities">
-          <EntitySetMapping Name="Passenger_Flows">
-            <EntityTypeMapping TypeName="SchedulingModel.Passenger_Flow">
-              <MappingFragment StoreEntitySet="Passenger Flow">
-                <ScalarProperty Name="StopID" ColumnName="StopID" />
-                <ScalarProperty Name="RouteID" ColumnName="RouteID" />
-                <ScalarProperty Name="Direction" ColumnName="Direction" />
-                <ScalarProperty Name="PeriodOfTime" ColumnName="PeriodOfTime" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Routes">
             <EntityTypeMapping TypeName="SchedulingModel.Route">
               <MappingFragment StoreEntitySet="Routes">
@@ -236,20 +223,35 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Stops">
-            <EntityTypeMapping TypeName="SchedulingModel.Stop">
-              <MappingFragment StoreEntitySet="Stops">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Speeds">
             <EntityTypeMapping TypeName="SchedulingModel.Speed">
               <MappingFragment StoreEntitySet="Speeds">
-                <ScalarProperty Name="Start_StopID" ColumnName="Start_StopID" />
+                <ScalarProperty Name="VehicleSpeed" ColumnName="VehicleSpeed" />
+                <ScalarProperty Name="Direction" ColumnName="Direction" />
                 <ScalarProperty Name="PeriodOfTime" ColumnName="PeriodOfTime" />
-                <ScalarProperty Name="Speed1" ColumnName="Speed" />
+                <ScalarProperty Name="Start_StopID" ColumnName="Start_StopID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stops">
+            <EntityTypeMapping TypeName="SchedulingModel.Stop">
+              <MappingFragment StoreEntitySet="Stops">
+                <ScalarProperty Name="Distance" ColumnName="Distance" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Route_ID" ColumnName="Route_ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="GUID_ID" ColumnName="GUID_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Passenger_Flows">
+            <EntityTypeMapping TypeName="SchedulingModel.Passenger_Flow">
+              <MappingFragment StoreEntitySet="Passenger Flow">
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="PeriodOfTime" ColumnName="PeriodOfTime" />
+                <ScalarProperty Name="Direction" ColumnName="Direction" />
+                <ScalarProperty Name="RouteID" ColumnName="RouteID" />
+                <ScalarProperty Name="StopID" ColumnName="StopID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

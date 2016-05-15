@@ -25,7 +25,7 @@ namespace Scheduling
         public MainWindow()
         {
             InitializeComponent();
-            dbContext = new SchedulingEntities();
+            //dbContext = new SchedulingEntities();
             //List<string> stops = new List<string>() {
             //    "Кольцевая Лоскутовская", "поселок Лоскутово", "Томское ДРСУ",
             //    "2-е мичуринские","1-е мичуринские", "поселок Апрель", "Пороховые склады",
@@ -36,20 +36,15 @@ namespace Scheduling
             //    "Главпочтамт", "Театр юного зрителя", "ЦУМ", "Речной вокзал", "Центральный рынок",
             //    "улица Дальне-Ключевская", "Дрожжевой завод", "Карандашная фабрика"
             //};
-            //foreach(var stop in stops)
-            //    dbContext.Stops.Add(new Stop() { ID = Guid.NewGuid(), Name = stop});
-            //var route = dbContext.Routes.First();
-            //var stops = dbContext.Stops.ToList();
+            //int i = 1;
             //foreach (var stop in stops)
-            //{
-            //    dbContext.RouteStops.Add(new RouteStop()
-            //    {
-            //        StopID = stop.ID,
-            //        RouteID = route.ID,
-            //        Direction = false
-            //    });
-            //}
-            ////dbContext.SaveChanges();
+            //    dbContext.Stops.Add(new Stop() {
+            //        ID = i++,
+            //        GUID_ID = Guid.NewGuid(),
+            //        Name = stop,
+            //        Route_ID = new Guid("96443343-1617-4887-8F23-D1A45D8AAB59") 
+            //    });            
+            //dbContext.SaveChanges();
             //AntColonyClass.feromonVelocity = 0.2;
             //AntColonyClass.feromonWeight = 2;
             //AntColonyClass.visionWeight = 2;
@@ -64,20 +59,33 @@ namespace Scheduling
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            AntColonyClass.feromonVelocity = 0.8;
-            AntColonyClass.feromonWeight = 3;
-            AntColonyClass.visionWeight = 3;
-            AntColonyClass.hoursNumber = 1;
-            AntColonyClass.passengersSpeed = 4;
-            AntColonyClass.passengersSpeedOut = 4;
-            AntColonyClass.vehicleNumber = 7;
-            AntColonyClass.InitializeVariables();
-            AntColonyClass.InitializeIntervals();
-            AntColonyClass.InitializeDepartureTime();
-            AntColonyClass.InitializePeopleInBus();
-            AntColonyClass.InitializeFeromons();
-            //AntColonyClass.StartBuses();
-            AntColonyClass.StartBusesReverse();
+            //AntColonyClass.feromonVelocity = 0.8;
+            //AntColonyClass.feromonWeight = 3;
+            //AntColonyClass.visionWeight = 3;
+            //AntColonyClass.hoursNumber = 1;
+            //AntColonyClass.passengersSpeed = 4;
+            //AntColonyClass.passengersSpeedOut = 4;
+            //AntColonyClass.vehicleNumber = 7;
+            //AntColonyClass.InitializeVariables();
+            //AntColonyClass.InitializeIntervals();
+            //AntColonyClass.InitializeDepartureTime();
+            //AntColonyClass.InitializePeopleInBus();
+            //AntColonyClass.InitializeFeromons();
+            ////AntColonyClass.StartBuses();
+            //AntColonyClass.StartBusesReverse();
+
+            List<string> stops = new List<string>() {"поселок Лоскутово", "Томское ДРСУ",
+                "2-е мичуринские","1-е мичуринские", "поселок Апрель", "Пороховые склады",
+                "поселок Предтеченск", "поселок Ключи", "поселок Просторный", "поселок Геологов",
+                "2-й переезд", "площадь Южная"
+            };
+            var tempSpeed = DataConnector.GetVehicleSpeedsByStops(stops.ToArray(), false);
+            var tempDistance = DataConnector.GetDistancesBetweenStops(stops.ToArray());
+            var optTime = new List<double?>();
+            for (int i = 0; i < stops.Count; i++)
+            {
+                optTime.Add(tempDistance[i] / tempSpeed[i]);
+            }
         }
     }
 }

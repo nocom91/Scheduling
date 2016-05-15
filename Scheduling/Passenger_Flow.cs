@@ -21,6 +21,5 @@ namespace Scheduling
         public int Quantity { get; set; }
     
         public virtual Route Route { get; set; }
-        public virtual Stop Stop { get; set; }
     }
 }

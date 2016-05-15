@@ -4,15 +4,15 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="ce4d4dc13e754906b5d192f7b7de3c62" Name="Diagram1">
-        <EntityTypeShape EntityType="SchedulingModel.Passenger_Flow" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
+      <Diagram DiagramId="ce4d4dc13e754906b5d192f7b7de3c62" Name="Diagram1" ZoomLevel="85">
         <EntityTypeShape EntityType="SchedulingModel.Route" Width="1.5" PointX="0.75" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchedulingModel.Stop" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="SchedulingModel.Speed" Width="1.5" PointX="2.625" PointY="6.875" IsExpanded="true" />
-        <AssociationConnector Association="SchedulingModel.FK_Passenger_Flow_Routes" ManuallyRouted="false" />
-        <AssociationConnector Association="SchedulingModel.FK_Passenger_Flow_Stops" ManuallyRouted="false" />
-        <AssociationConnector Association="SchedulingModel.FK_Speeds_Stops" ManuallyRouted="false" />
-      </Diagram>
+        <EntityTypeShape EntityType="SchedulingModel.Speed" Width="1.5" PointX="5.25" PointY="4.375" />
+        <EntityTypeShape EntityType="SchedulingModel.Stop" Width="1.5" PointX="3" PointY="0.75" />
+        <AssociationConnector Association="SchedulingModel.FK_Stops_Routes" />
+        <AssociationConnector Association="SchedulingModel.FK_Speeds_Stops" />
+        <EntityTypeShape EntityType="SchedulingModel.Passenger_Flow" Width="1.5" PointX="3" PointY="4" />
+        <AssociationConnector Association="SchedulingModel.FK_Passenger_Flow_Routes" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>
