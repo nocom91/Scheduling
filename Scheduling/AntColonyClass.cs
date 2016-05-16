@@ -34,11 +34,11 @@ namespace Scheduling
         private static double[,,] feromons;
         public static int vehicleNumber { get; set; }
 
-        public static void InitializeVariables()
+        public static void InitializeVariables(int stopnumber)
         {
             timeEnd = (int)(hoursNumber * 60);
             timeStart = 0;
-            stopNumber = 9;
+            stopNumber = stopnumber;
             routeNumber = 1;
             amountOfPossibleIntervals = 9;
             possibleIntervals = new double[routeNumber, stopNumber - 1, amountOfPossibleIntervals];
@@ -52,11 +52,11 @@ namespace Scheduling
             feromons = new double[routeNumber, stopNumber, timeEnd];
         }
         //Инициализируются массивы, описывающие оптимальные интервалы и возможные интервалы
-        public static void InitializeIntervals()
+        public static void InitializeIntervals(double?[] optTimes)
         {
             for (int i = 0; i < stopNumber - 1; i++)
             {
-                timeOpt[routeNumber - 1, i] = 7; //Задаем оптимальный интервал - 3 минуты
+                timeOpt[routeNumber - 1, i] = (double)optTimes[i]; //Задаем оптимальный интервал - 3 минуты
                 for (int j = 0; j < amountOfPossibleIntervals; j++)
                 {
                     possibleIntervals[routeNumber-1, i, j] = timeOpt[routeNumber - 1, i] * (1 - variation) +

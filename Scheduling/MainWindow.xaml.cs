@@ -59,13 +59,7 @@ namespace Scheduling
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //AntColonyClass.feromonVelocity = 0.8;
-            //AntColonyClass.feromonWeight = 3;
-            //AntColonyClass.visionWeight = 3;
-            //AntColonyClass.hoursNumber = 1;
-            //AntColonyClass.passengersSpeed = 4;
-            //AntColonyClass.passengersSpeedOut = 4;
-            //AntColonyClass.vehicleNumber = 7;
+            
             //AntColonyClass.InitializeVariables();
             //AntColonyClass.InitializeIntervals();
             //AntColonyClass.InitializeDepartureTime();
@@ -86,6 +80,20 @@ namespace Scheduling
             {
                 optTime.Add(tempDistance[i] / tempSpeed[i]);
             }
+            AntColonyClass.feromonVelocity = 0.8;
+            AntColonyClass.feromonWeight = 3;
+            AntColonyClass.visionWeight = 3;
+            AntColonyClass.hoursNumber = 1;
+            AntColonyClass.passengersSpeed = 4;
+            AntColonyClass.passengersSpeedOut = 4;
+            AntColonyClass.vehicleNumber = 7;
+            AntColonyClass.InitializeVariables(stops.Count-1);
+            AntColonyClass.InitializeIntervals(optTime.ToArray());
+
+            AntColonyClass.InitializeDepartureTime();
+            AntColonyClass.InitializePeopleInBus();
+            AntColonyClass.InitializeFeromons();
+            AntColonyClass.StartBuses();
         }
     }
 }
