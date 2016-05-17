@@ -59,7 +59,7 @@ namespace Scheduling
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
+
             //AntColonyClass.InitializeVariables();
             //AntColonyClass.InitializeIntervals();
             //AntColonyClass.InitializeDepartureTime();
@@ -73,25 +73,34 @@ namespace Scheduling
                 "поселок Предтеченск", "поселок Ключи", "поселок Просторный", "поселок Геологов",
                 "2-й переезд", "площадь Южная"
             };
-            var tempSpeed = DataConnector.GetVehicleSpeedsByStops(stops.ToArray(), false);
+            var tempSpeed = DataConnector.GetVehicleSpeedsByStops(stops.ToArray(), false, "6:00-7:00");
             var tempDistance = DataConnector.GetDistancesBetweenStops(stops.ToArray());
             var optTime = new List<double?>();
             for (int i = 0; i < stops.Count; i++)
             {
                 optTime.Add(tempDistance[i] / tempSpeed[i]);
             }
+            var tempPeopleIn = DataConnector.GetAmountOfPeopleIN(stops.ToArray(), "6:00-7:00");
+            var tempPeopleOut = DataConnector.GetAmountOfPeopleOUT(stops.ToArray(), "6:00-7:00");
+            int sumPeopleIn = 0, sumPeopleOut = 0;
+            for (int i = 0; i < stops.Count; i++)
+            {
+                sumPeopleIn += (int)tempPeopleIn[i];
+                sumPeopleOut += (int)tempPeopleOut[i];
+            }
+            var newKeySector = new KeySector(sumPeopleIn, sumPeopleOut, 50, 10);
+            var amountofBuses = newKeySector.BusNumber();
             AntColonyClass.feromonVelocity = 0.8;
             AntColonyClass.feromonWeight = 3;
             AntColonyClass.visionWeight = 3;
             AntColonyClass.hoursNumber = 1;
-            AntColonyClass.passengersSpeed = 4;
-            AntColonyClass.passengersSpeedOut = 4;
-            AntColonyClass.vehicleNumber = 7;
-            AntColonyClass.InitializeVariables(stops.Count-1);
+            AntColonyClass.vehicleNumber = amountofBuses;
+            AntColonyClass.InitializeVariables(stops.Count);
             AntColonyClass.InitializeIntervals(optTime.ToArray());
 
             AntColonyClass.InitializeDepartureTime();
-            AntColonyClass.InitializePeopleInBus();
+
+            AntColonyClass.InitializePeopleInBus(tempPeopleIn.ToArray(), tempPeopleOut.ToArray());
             AntColonyClass.InitializeFeromons();
             AntColonyClass.StartBuses();
         }

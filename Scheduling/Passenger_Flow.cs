@@ -18,7 +18,8 @@ namespace Scheduling
         public System.Guid RouteID { get; set; }
         public bool Direction { get; set; }
         public string PeriodOfTime { get; set; }
-        public int Quantity { get; set; }
+        public Nullable<int> QuantityIN { get; set; }
+        public Nullable<int> QuantityOUT { get; set; }
     
         public virtual Route Route { get; set; }
     }

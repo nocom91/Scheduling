@@ -12,8 +12,6 @@ namespace Scheduling
         public static double feromonWeight { get; set; }   //Весовой коэффициент для феромона
         public static double visionWeight { get; set; } //весовой коэффициент для видимости
         public static double hoursNumber { get; set; } //временной участок в часах
-        public static double passengersSpeed { get; set; } //скорость наполнения остановок, чел./час (чел./мин.)
-        public static double passengersSpeedOut { get; set; }//скорость выхода пассажиров из тс, чел./час (чел./мин.)
         private static int passengersAll { get; set; }  //общее количество перевезенных пассажиров
         private static int timeStart;  //Момент начала работы ТС
         private static int timeEnd;  //ТС ездят N часов
@@ -44,7 +42,7 @@ namespace Scheduling
             possibleIntervals = new double[routeNumber, stopNumber - 1, amountOfPossibleIntervals];
             timeOpt = new double[routeNumber, stopNumber - 1];
             variation = 0.2;
-            departureTime = new int[7];
+            departureTime = new int[vehicleNumber];
             buses = new List<Bus>();
             peopleAmount = new int[timeEnd, stopNumber];
             peopleAmountOut = new int[timeEnd, stopNumber];
@@ -72,13 +70,13 @@ namespace Scheduling
         }
 
         //Инициализируется массив, отвечающий за количество человек, заходящих в ТС в каждый момент времени, на каждой остановке
-        public static void InitializePeopleInBus()
+        public static void InitializePeopleInBus(int?[] peopleIN, int?[] peopleOUT)
         {
             for (int i = 0; i < timeEnd; i++)
                 for (int j = 0; j < stopNumber; j++)
                 {
-                    peopleAmount[i, j] = (int)Math.Round(passengersSpeed);
-                    peopleAmountOut[i, j] = (int)Math.Round(passengersSpeedOut);
+                    peopleAmount[i, j] = (int)peopleIN[j];
+                    peopleAmountOut[i, j] = (int)peopleOUT[j];
                 }
         }
         //Инициализируются феромоны. Изначально пассажиры не собраны и феромоны не отложены

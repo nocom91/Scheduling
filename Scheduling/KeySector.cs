@@ -9,14 +9,17 @@ namespace Scheduling
     public class KeySector
     {
         private static int capacity = 36; //Номинальная вместимость ПАЗ-3205
-        public int Q_in; //Количество вошедших пассажиров
-        public int Q_out;//Количество вышедших пассажиров
-        public int WorkingHouse; // Оборотное время маршрута
-        public int Interval;//Предполагаемый интервал выхода
+        private int Q_in; //Количество вошедших пассажиров
+        private int Q_out;//Количество вышедших пассажиров
+        private int WorkingHours; // Оборотное время маршрута
+        private int Interval;//Предполагаемый интервал выхода
 
         public KeySector(int qin, int qout, int workingh, int interval)
         {
-
+            Q_in = qin;
+            Q_out = qout;
+            WorkingHours = workingh;
+            Interval = interval;
         }
 
 
@@ -28,7 +31,7 @@ namespace Scheduling
 
         public int BusNumber()
         {
-            return (int)(this.WorkingHouse * BetaCoefficient()) / this.Interval;
+            return (int)Math.Ceiling((this.WorkingHours * BetaCoefficient()) / this.Interval);
         }
     }
 }
