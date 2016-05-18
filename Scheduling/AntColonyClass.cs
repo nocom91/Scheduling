@@ -91,7 +91,7 @@ namespace Scheduling
             return startF * Math.Pow(1 - feromonVelocity, interval);
         }
 
-        public static void StartBuses()
+        public static double[,] StartBuses()
         {
             for (int time = timeStart; time < timeEnd; time++)
             {
@@ -201,6 +201,7 @@ namespace Scheduling
                 }
 
             }
+            return timeTable;
 
         }
 

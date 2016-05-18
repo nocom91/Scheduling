@@ -91,10 +91,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SchedulingModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="SingleDeviceAlgorith.cs" />
     <Compile Include="Speed.cs">
       <DependentUpon>SchedulingModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Stop.cs">
+      <DependentUpon>SchedulingModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Time.cs">
       <DependentUpon>SchedulingModel.tt</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">

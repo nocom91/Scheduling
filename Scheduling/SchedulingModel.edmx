@@ -47,6 +47,15 @@
           <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="Distance" Type="int" />
         </EntityType>
+        <EntityType Name="Times">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Minutes" Type="int" Nullable="false" />
+          <Property Name="PeriodOfDay" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <Association Name="FK_Passenger Flow_Routes">
           <End Role="Routes" Type="Self.Routes" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -90,6 +99,7 @@
           <EntitySet Name="Routes" EntityType="Self.Routes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Speeds" EntityType="Self.Speeds" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Stops" EntityType="Self.Stops" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Times" EntityType="Self.Times" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Passenger Flow_Routes" Association="Self.FK_Passenger Flow_Routes">
             <End Role="Routes" EntitySet="Routes" />
             <End Role="Passenger Flow" EntitySet="Passenger Flow" />
@@ -133,6 +143,7 @@
             <End Role="Route" EntitySet="Routes" />
             <End Role="Passenger_Flow" EntitySet="Passenger_Flows" />
           </AssociationSet>
+          <EntitySet Name="Times" EntityType="SchedulingModel.Time" />
           </EntityContainer>
         <EntityType Name="Speed">
           <Key>
@@ -211,6 +222,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Time">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Minutes" Type="Int32" Nullable="false" />
+          <Property Name="PeriodOfDay" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -255,6 +275,16 @@
                 <ScalarProperty Name="Direction" ColumnName="Direction" />
                 <ScalarProperty Name="RouteID" ColumnName="RouteID" />
                 <ScalarProperty Name="StopID" ColumnName="StopID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Times">
+            <EntityTypeMapping TypeName="SchedulingModel.Time">
+              <MappingFragment StoreEntitySet="Times">
+                <ScalarProperty Name="PeriodOfDay" ColumnName="PeriodOfDay" />
+                <ScalarProperty Name="Minutes" ColumnName="Minutes" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

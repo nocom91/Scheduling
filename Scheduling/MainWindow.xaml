@@ -5,8 +5,63 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Scheduling"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+        Title="MainWindow" Height="350" Width="613" Loaded="Window_Loaded">
     <Grid>
-        
+        <ComboBox x:Name="routesList" HorizontalAlignment="Left" Margin="88,30,0,0" VerticalAlignment="Top" Width="105" SelectionChanged="routesList_SelectionChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Label x:Name="label" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top" Height="26" Width="73">
+            <Label.Content>
+                Маршрут
+            </Label.Content>
+        </Label>
+        <DataGrid x:Name="dataGridStops" AutoGenerateColumns="False" ItemsSource="{Binding}"
+                  HorizontalAlignment="Left" Margin="371,30,0,0" CanUserAddRows="False" CanUserDeleteRows="False"
+                  CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
+                  VerticalAlignment="Top" Width="224" Height="277"
+                  >
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Name}" Header="Название остановки" Width="*"/>
+            </DataGrid.Columns>
+
+        </DataGrid>
+        <ComboBox x:Name="timesList" HorizontalAlignment="Left" Margin="88,76,0,0" VerticalAlignment="Top" Width="105" SelectionChanged="comboBox_SelectionChanged" >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <Label x:Name="label1" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top">
+            <Label.Content>
+                Время
+            </Label.Content>
+        </Label>
+        <GroupBox x:Name="AntColony" Header="Алгоритм муравьиных колоний" HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" Height="171" Width="330">
+            <StackPanel HorizontalAlignment="Left" Height="150" VerticalAlignment="Top" Width="320" Margin="0,0,-2,-3">
+                <StackPanel Height="50" Orientation="Horizontal">
+                    <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="Скорость испарения феромона" HorizontalAlignment="Center" VerticalAlignment="Center" Width="190"/>
+                    <TextBox x:Name="fVeolcity" TextWrapping="Wrap" Width="73" VerticalAlignment="Center" Margin="50,0,0,0"/>
+                </StackPanel>
+                <StackPanel Height="50" Orientation="Horizontal">
+                    <TextBlock x:Name="textBlock_Copy" TextWrapping="Wrap" Text="Весовой коэффициент феромона" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,17.02,0,16.98" Width="190"/>
+                    <TextBox x:Name="fWeight" TextWrapping="Wrap" Width="73" VerticalAlignment="Center" Margin="50,16.02,0,15.98"/>
+                </StackPanel>
+                <StackPanel Height="50" Orientation="Horizontal">
+                    <TextBlock x:Name="textBlock_Copy1" TextWrapping="Wrap" Text="Весовой коэффициент видимости" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,17.04,0,16.96" Width="190"/>
+                    <TextBox x:Name="vWeight" TextWrapping="Wrap" Width="73" VerticalAlignment="Center" Margin="50,16.04,0,15.96"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+
     </Grid>
 </Window>
