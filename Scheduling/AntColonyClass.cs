@@ -32,10 +32,10 @@ namespace Scheduling
         private static double[,,] feromons;
         public static int vehicleNumber { get; set; }
 
-        public static void InitializeVariables(int stopnumber)
+        public static void InitializeVariables(int stopnumber, int tStart)
         {
-            timeEnd = (int)(hoursNumber * 60);
-            timeStart = 0;
+            timeStart = tStart;
+            timeEnd = tStart+(int)(hoursNumber * 60);
             stopNumber = stopnumber;
             routeNumber = 1;
             amountOfPossibleIntervals = 9;
@@ -46,7 +46,7 @@ namespace Scheduling
             buses = new List<Bus>();
             peopleAmount = new int[timeEnd, stopNumber];
             peopleAmountOut = new int[timeEnd, stopNumber];
-            timeTable = new double[departureTime.Length, stopNumber];
+            timeTable = new double[vehicleNumber, stopNumber];
             feromons = new double[routeNumber, stopNumber, timeEnd];
         }
         //Инициализируются массивы, описывающие оптимальные интервалы и возможные интервалы
@@ -57,16 +57,17 @@ namespace Scheduling
                 timeOpt[routeNumber - 1, i] = (double)optTimes[i]; //Задаем оптимальный интервал - 3 минуты
                 for (int j = 0; j < amountOfPossibleIntervals; j++)
                 {
-                    possibleIntervals[routeNumber-1, i, j] = timeOpt[routeNumber - 1, i] * (1 - variation) +
+                    possibleIntervals[routeNumber - 1, i, j] = timeOpt[routeNumber - 1, i] * (1 - variation) +
                         j * 2 * variation * timeOpt[routeNumber - 1, i] / amountOfPossibleIntervals;
                 }
             }
         }
 
-        public static void InitializeDepartureTime()
+        public static void InitializeDepartureTime(int interval, int depTime)
         {
-            for (int i = 0; i < departureTime.Length;  i++)
-                departureTime[i] = i * 5+5;
+            departureTime[0] = depTime;
+            for (int i = 1; i < departureTime.Length; i++)
+                departureTime[i] = departureTime[i - 1] + interval;
         }
 
         //Инициализируется массив, отвечающий за количество человек, заходящих в ТС в каждый момент времени, на каждой остановке
@@ -96,7 +97,7 @@ namespace Scheduling
             for (int time = timeStart; time < timeEnd; time++)
             {
                 for (int station = 0; station < stopNumber; station++)
-                    if (time != 0)
+                    if (time != timeStart)
                         //Испарение феромона
                         feromons[routeNumber - 1, station, time] = feromons[routeNumber - 1, station, time - 1] * (1 - feromonVelocity);
                 for (int i = 0; i < departureTime.Count(); i++)
@@ -114,7 +115,7 @@ namespace Scheduling
                             NextTime = departureTime[i] + timeOpt[0, 1],
                             Capacity = 42
                         };
-                        timeTable[bus.Number - 1, bus.NextStation - 1] = bus.NextTime;                        
+                        timeTable[bus.Number - 1, bus.NextStation - 1] = bus.NextTime;
                         buses.Add(bus);
                     }
                 }
@@ -172,7 +173,7 @@ namespace Scheduling
                                 visibility[interval] = Math.Pow(1 / Math.Abs(timeOpt[routeNumber - 1, bus.NextStation - 1] -
                                     currentInterval[interval]), visionWeight);
                                 //Считаем феромоны
-                                feromone[interval] = GetFeromoneAtTime(feromons[routeNumber - 1, bus.NextStation-1, time], currentInterval[interval]);
+                                feromone[interval] = GetFeromoneAtTime(feromons[routeNumber - 1, bus.NextStation - 1, time], currentInterval[interval]);
                                 //Находим сумму
                                 sum += visibility[interval] * Math.Pow(feromone[interval], feromonWeight);
                             }
@@ -192,9 +193,9 @@ namespace Scheduling
                             }
 
                             if ((new Random()).NextDouble() <= possibilityMax)
-                                bus.NextTime = time + intervalMax;
+                                bus.NextTime = time+intervalMax;
                             else
-                                bus.NextTime = time + timeOpt[routeNumber - 1, bus.NextStation - 1];
+                                bus.NextTime = time+timeOpt[routeNumber - 1, bus.NextStation - 1];
                         }
                         timeTable[bus.Number - 1, bus.NextStation - 1] = bus.NextTime;
                     }
@@ -207,7 +208,7 @@ namespace Scheduling
 
         public static void StartBusesReverse()
         {
-            for (int time = timeEnd-1; time >= timeStart; time--)
+            for (int time = timeEnd - 1; time >= timeStart; time--)
             {
                 for (int station = 0; station < stopNumber; station++)
                 {
@@ -216,7 +217,7 @@ namespace Scheduling
                         feromons[routeNumber - 1, station, time] = feromons[routeNumber - 1, station, time - 1] * (1 - feromonVelocity);
                     }
                 }
-                for (int i = departureTime.Count()-1; i >= 0; i--)
+                for (int i = departureTime.Count() - 1; i >= 0; i--)
                 {
                     if (vehicleNumber > 0 && departureTime[i] == time) //автобус едет, если есть свободное ТС и его время пришло
                     {
@@ -289,7 +290,7 @@ namespace Scheduling
                                 visibility[interval] = Math.Pow(1 / Math.Abs(timeOpt[routeNumber - 1, bus.NextStation - 1] -
                                     currentInterval[interval]), visionWeight);
                                 //Считаем феромоны
-                                feromone[interval] = GetFeromoneAtTime(feromons[routeNumber - 1, bus.NextStation-1, time], currentInterval[interval]);
+                                feromone[interval] = GetFeromoneAtTime(feromons[routeNumber - 1, bus.NextStation - 1, time], currentInterval[interval]);
                                 //Находим сумму
                                 sum += visibility[interval] * Math.Pow(feromone[interval], feromonWeight);
                             }

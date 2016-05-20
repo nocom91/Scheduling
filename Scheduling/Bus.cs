@@ -13,5 +13,6 @@ namespace Scheduling
         public int Number { get; set; }
         public double NextTime { get; set; }
         public int NextStation { get; set; }
+        
     }
 }

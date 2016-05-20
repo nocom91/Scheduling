@@ -23,6 +23,7 @@ namespace Scheduling
     public partial class MainWindow : Window
     {
         SchedulingEntities dbContext;
+        private string choosenTime;
         public MainWindow()
         {
             InitializeComponent();
@@ -39,67 +40,81 @@ namespace Scheduling
                     orderby time.Minutes ascending
                     select time.Name;
             timesList.ItemsSource = query.ToList();
-            //AntColonyClass.InitializeVariables();
-            //AntColonyClass.InitializeIntervals();
-            //AntColonyClass.InitializeDepartureTime();
-            //AntColonyClass.InitializePeopleInBus();
-            //AntColonyClass.InitializeFeromons();
-            ////AntColonyClass.StartBuses();
-            //AntColonyClass.StartBusesReverse();
-
-            //List<string> stops = new List<string>() {"поселок Лоскутово", "Томское ДРСУ",
-            //    "2-е мичуринские","1-е мичуринские", "поселок Апрель", "Пороховые склады",
-            //    "поселок Предтеченск", "поселок Ключи", "поселок Просторный", "поселок Геологов",
-            //    "2-й переезд", "площадь Южная"
-            //};
-            //var tempSpeed = DataConnector.GetVehicleSpeedsByStops(stops.ToArray(), false, "6:00-7:00");
-            //var tempDistance = DataConnector.GetDistancesBetweenStops(stops.ToArray());
-            //var optTime = new List<double?>();
-            //for (int i = 0; i < stops.Count; i++)
-            //{
-            //    optTime.Add(tempDistance[i] / tempSpeed[i]);
-            //}
-            //var tempPeopleIn = DataConnector.GetAmountOfPeopleIN(stops.ToArray(), "6:00-7:00");
-            //var tempPeopleOut = DataConnector.GetAmountOfPeopleOUT(stops.ToArray(), "6:00-7:00");
-            //int sumPeopleIn = 0, sumPeopleOut = 0;
-            //for (int i = 0; i < stops.Count; i++)
-            //{
-            //    sumPeopleIn += (int)tempPeopleIn[i];
-            //    sumPeopleOut += (int)tempPeopleOut[i];
-            //}
-            //var newKeySector = new KeySector(sumPeopleIn, sumPeopleOut, 50, 10);
-            //var amountofBuses = newKeySector.BusNumber();
-            //AntColonyClass.feromonVelocity = 0.8;
-            //AntColonyClass.feromonWeight = 3;
-            //AntColonyClass.visionWeight = 3;
-            //AntColonyClass.hoursNumber = 1;
-            //AntColonyClass.vehicleNumber = amountofBuses;
-            //AntColonyClass.InitializeVariables(stops.Count);
-            //AntColonyClass.InitializeIntervals(optTime.ToArray());
-
-            //AntColonyClass.InitializeDepartureTime();
-
-            //AntColonyClass.InitializePeopleInBus(tempPeopleIn.ToArray(), tempPeopleOut.ToArray());
-            //AntColonyClass.InitializeFeromons();
-            //var timetable = AntColonyClass.StartBuses();
-            //SingleDeviceAlgorith.CalculateSchedule(tempPeopleIn.ToArray(),
-            //    tempPeopleOut.ToArray(), timetable, 0);
         }
 
         private void routesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             dbContext = new SchedulingEntities();
             var selectedValue = ((ComboBox)sender).SelectedValue;
-            var temp = dbContext.Stops.Select(x => x).Where(x=>x.Route == (
-                dbContext.Routes.FirstOrDefault(y=>y.Name == selectedValue.ToString())
+            var temp = dbContext.Stops.OrderBy(x=>x.ID).Select(x => x).Where(x => x.Route == (
+                dbContext.Routes.FirstOrDefault(y => y.Name == selectedValue.ToString())
             )).ToList();
             dataGridStops.ItemsSource = temp;
-            
         }
 
-        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void timesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var selectedValue = ((ComboBox)sender).SelectedValue;
+            choosenTime = selectedValue.ToString();
+        }
 
+        private void calculate_Click(object sender, RoutedEventArgs e)
+        {
+            double temp = 0;
+            Double.TryParse(fVeolcity.Text, out temp);
+            AntColonyClass.feromonVelocity = temp;
+            Double.TryParse(fWeight.Text, out temp);
+            AntColonyClass.feromonWeight = temp;
+            Double.TryParse(vWeight.Text, out temp);
+            AntColonyClass.visionWeight = temp;
+            AntColonyClass.hoursNumber = 1;
+            int departureMinutes = DataConnector.ParseTimeToMinutes(kSectorTime.Text);
+            int interval = 0;
+            Int32.TryParse(textboxInterval.Text, out interval);
+            var tempStops = dataGridStops.SelectedItems;
+            var stops = new List<Stop>();
+            foreach (var stop in tempStops)
+            {
+                stops.Add(stop as Stop);
+            }
+            var stopsNames = stops.Select(x => x.Name).ToArray();
+            var tempSpeed = DataConnector.GetVehicleSpeedsByStops(stopsNames, false, choosenTime);
+            var tempDistance = DataConnector.GetDistancesBetweenStops(stopsNames);
+            var optTime = new List<double?>();
+            for (int i = 0; i < stops.Count; i++)
+            {
+                optTime.Add(tempDistance[i] / tempSpeed[i]);
+            }
+            var tempPeopleIn = DataConnector.GetAmountOfPeopleIN(stopsNames, choosenTime);
+            var tempPeopleOut = DataConnector.GetAmountOfPeopleOUT(stopsNames, choosenTime);
+            int sumPeopleIn = 0, sumPeopleOut = 0;
+            for (int i = 0; i < stopsNames.Count(); i++)
+            {
+                sumPeopleIn += (int)tempPeopleIn[i];
+                sumPeopleOut += (int)tempPeopleOut[i];
+            }
+            var newKeySector = new KeySector(sumPeopleIn, sumPeopleOut, 50, interval);
+            var amountofBuses = newKeySector.BusNumber();
+            AntColonyClass.vehicleNumber = amountofBuses;
+            var choosenInterval = choosenTime.Split('-', ':');
+            int startTime = Int32.Parse(choosenInterval[0]) * 60 + Int32.Parse(choosenInterval[1]);
+            AntColonyClass.InitializeVariables(stopsNames.Count(), startTime);
+            AntColonyClass.InitializeIntervals(optTime.ToArray());
+            AntColonyClass.InitializeDepartureTime(interval, startTime);
+            AntColonyClass.InitializePeopleInBus(tempPeopleIn.ToArray(), tempPeopleOut.ToArray());
+            AntColonyClass.InitializeFeromons();
+            var timetable = AntColonyClass.StartBuses();
+            var newTimeTable = new string[timetable.GetLength(0), timetable.GetLength(1)];
+            for (int i = 0; i < timetable.GetLength(0); i++)
+            {
+                for (int j = 0; j < timetable.GetLength(1); j++)
+                {
+                    newTimeTable[i, j] = DataConnector.
+                        ParseMinutesToTimeString(timetable[i,j]);
+                }
+            }
+            //SingleDeviceAlgorith.CalculateSchedule(tempPeopleIn.ToArray(),
+            //    tempPeopleOut.ToArray(), timetable, 0);
         }
     }
 }

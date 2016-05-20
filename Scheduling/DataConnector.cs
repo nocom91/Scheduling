@@ -7,10 +7,10 @@ using Excel = Microsoft.Office.Interop;
 
 namespace Scheduling
 {
-    
+
     public static class DataConnector
     {
-       static SchedulingEntities dbContext;
+        static SchedulingEntities dbContext;
         public static List<double> GetVehicleSpeedsByStops(string[] stops, bool direction, string time)
         {
             dbContext = new SchedulingEntities();
@@ -18,12 +18,12 @@ namespace Scheduling
             foreach (var str in stops)
             {
                 var stopID = (dbContext.Stops.FirstOrDefault(y => y.Name == str)).GUID_ID;
-                double speed = dbContext.Speeds.Where(x => (x.Start_StopID == stopID) 
+                double speed = dbContext.Speeds.Where(x => (x.Start_StopID == stopID)
                     && (x.Direction == direction)
                     && (x.PeriodOfTime == time)).
                     FirstOrDefault().VehicleSpeed;
 
-                speedsInMeterPerMin.Add(speed*16.67);
+                speedsInMeterPerMin.Add(speed * 16.67);
             }
             return speedsInMeterPerMin;
         }
@@ -65,6 +65,30 @@ namespace Scheduling
                     );
             }
             return peopleAmountOut;
+        }
+
+        public static int ParseTimeToMinutes(string time)
+        {
+            int timeInMinutes = 0;
+            var hoursminutes = time.Split(':');
+            timeInMinutes = Int32.Parse(hoursminutes[0]) * 60 + Int32.Parse(hoursminutes[1]);
+            return timeInMinutes;
+        }
+        public static string ParseMinutesToTimeString(double minutes)
+        {
+            string time = "";
+            int tempMinutes = (int)Math.Round(minutes);
+            time = ((int)(tempMinutes / 60)).ToString() + ':';
+            if ((int)tempMinutes % 60 == 0)
+            {
+                time += "00";
+            }
+            else
+            {
+                time += ((int)tempMinutes % 60).ToString();
+            }
+
+            return time;
         }
     }
 }
