@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Scheduling"
         mc:Ignorable="d"
-        Title="MainWindow" Height="501" Width="613" Loaded="Window_Loaded">
+        Title="СППР 'Расписание движения ГПТ'" Height="501" Width="613" Loaded="Window_Loaded">
     <Grid>
         <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
              <Label x:Name="label" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="26" Width="73">
@@ -27,7 +27,7 @@
                   HorizontalAlignment="Left" Margin="371,30,0,0" CanUserAddRows="False" CanUserDeleteRows="False"
                   CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   VerticalAlignment="Top" Width="224" Height="314"
-                  >
+                  IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Name}" Header="Название остановки" Width="*"/>
             </DataGrid.Columns>

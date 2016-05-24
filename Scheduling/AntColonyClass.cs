@@ -35,7 +35,7 @@ namespace Scheduling
         public static void InitializeVariables(int stopnumber, int tStart)
         {
             timeStart = tStart;
-            timeEnd = tStart+(int)(hoursNumber * 60);
+            timeEnd = tStart + (int)(hoursNumber * 60);
             stopNumber = stopnumber;
             routeNumber = 1;
             amountOfPossibleIntervals = 9;
@@ -73,11 +73,22 @@ namespace Scheduling
         //Инициализируется массив, отвечающий за количество человек, заходящих в ТС в каждый момент времени, на каждой остановке
         public static void InitializePeopleInBus(int?[] peopleIN, int?[] peopleOUT)
         {
-            for (int i = 0; i < timeEnd; i++)
+            double sumIn = 0, sumOut = 0;
+            for (int i = timeStart; i < timeEnd; i++)
                 for (int j = 0; j < stopNumber; j++)
                 {
-                    peopleAmount[i, j] = (int)peopleIN[j];
-                    peopleAmountOut[i, j] = (int)peopleOUT[j];
+                    //peopleAmount[i, j] = (int)peopleIN[j];
+                    //peopleAmountOut[i, j] = (int)peopleOUT[j];
+                    sumIn += (int)peopleIN[j];
+                    sumOut += (int)peopleOUT[j];
+                }
+            sumIn = (double)sumIn / 60;
+            sumOut = (double)sumOut / 60;
+            for (int i = timeStart; i < timeEnd; i++)
+                for (int j = 0; j < stopNumber; j++)
+                {
+                    peopleAmount[i, j] = (int)sumIn;
+                    peopleAmountOut[i, j] = (int)sumOut;
                 }
         }
         //Инициализируются феромоны. Изначально пассажиры не собраны и феромоны не отложены
@@ -94,6 +105,7 @@ namespace Scheduling
 
         public static double[,] StartBuses()
         {
+            int temp_variable = 0;
             for (int time = timeStart; time < timeEnd; time++)
             {
                 for (int station = 0; station < stopNumber; station++)
@@ -113,13 +125,14 @@ namespace Scheduling
                             Number = prevNumber + 1,
                             NextStation = 1,
                             NextTime = departureTime[i] + timeOpt[0, 1],
-                            Capacity = 42
+                            Capacity = 42,
+                            Interval = timeOpt[0, 1]
                         };
-                        timeTable[bus.Number - 1, bus.NextStation - 1] = bus.NextTime;
+                        timeTable[bus.Number - 1, bus.NextStation - 1] = bus.Interval;
                         buses.Add(bus);
                     }
                 }
-                for (int k = 0; k < buses.Count; k++)
+                for (int k = temp_variable; k < buses.Count; k++)
                 {
                     var bus = buses[k];
                     if (time == (int)Math.Round(bus.NextTime)) //Автобус прибыл на остановку
@@ -145,6 +158,7 @@ namespace Scheduling
                         bus.NextStation++; // Двигаемся к следующей остановке
                         if (bus.NextStation >= stopNumber)
                         {
+                            temp_variable = bus.Number;
                             buses.Remove(bus);
                             vehicleNumber++;
                         }
@@ -193,11 +207,17 @@ namespace Scheduling
                             }
 
                             if ((new Random()).NextDouble() <= possibilityMax)
-                                bus.NextTime = time+intervalMax;
+                            {
+                                bus.NextTime = time + intervalMax;
+                                bus.Interval = intervalMax;
+                            }
                             else
-                                bus.NextTime = time+timeOpt[routeNumber - 1, bus.NextStation - 1];
+                            {
+                                bus.NextTime = time + timeOpt[routeNumber - 1, bus.NextStation - 1];
+                                bus.Interval = timeOpt[routeNumber - 1, bus.NextStation - 1];
+                            }
                         }
-                        timeTable[bus.Number - 1, bus.NextStation - 1] = bus.NextTime;
+                        timeTable[bus.Number - 1, bus.NextStation - 1] = bus.Interval;
                     }
                 }
 

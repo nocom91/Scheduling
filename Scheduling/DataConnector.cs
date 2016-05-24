@@ -83,6 +83,10 @@ namespace Scheduling
             {
                 time += "00";
             }
+            else if ((int)tempMinutes % 60 < 10)
+            {
+                time+='0'+ ((int)tempMinutes % 60).ToString();
+            }
             else
             {
                 time += ((int)tempMinutes % 60).ToString();

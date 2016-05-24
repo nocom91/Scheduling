@@ -24,6 +24,8 @@ namespace Scheduling
     {
         SchedulingEntities dbContext;
         private string choosenTime;
+        private double[,] finalTimeTable;
+        private List<Stop> stops;
         public MainWindow()
         {
             InitializeComponent();
@@ -46,9 +48,9 @@ namespace Scheduling
         {
             dbContext = new SchedulingEntities();
             var selectedValue = ((ComboBox)sender).SelectedValue;
-            var temp = dbContext.Stops.OrderBy(x=>x.ID).Select(x => x).Where(x => x.Route == (
-                dbContext.Routes.FirstOrDefault(y => y.Name == selectedValue.ToString())
-            )).ToList();
+            var temp = dbContext.Stops.OrderBy(x => x.ID).Select(x => x).Where(x => x.Route == (
+                  dbContext.Routes.FirstOrDefault(y => y.Name == selectedValue.ToString())
+              )).ToList();
             dataGridStops.ItemsSource = temp;
         }
 
@@ -59,6 +61,14 @@ namespace Scheduling
         }
 
         private void calculate_Click(object sender, RoutedEventArgs e)
+        {
+            StartBuses();
+            Results window = new Results();
+            window.timetable = finalTimeTable;
+            window.selectedStops = stops;
+            window.Show();
+        }
+        private void StartBuses()
         {
             double temp = 0;
             Double.TryParse(fVeolcity.Text, out temp);
@@ -71,11 +81,12 @@ namespace Scheduling
             int departureMinutes = DataConnector.ParseTimeToMinutes(kSectorTime.Text);
             int interval = 0;
             Int32.TryParse(textboxInterval.Text, out interval);
-            var tempStops = dataGridStops.SelectedItems;
-            var stops = new List<Stop>();
+            var tempStops =dataGridStops.SelectedItems;
+            stops = new List<Stop>();
             foreach (var stop in tempStops)
             {
-                stops.Add(stop as Stop);
+                var tempStop = (Stop)stop;
+                stops.Add(tempStop);
             }
             var stopsNames = stops.Select(x => x.Name).ToArray();
             var tempSpeed = DataConnector.GetVehicleSpeedsByStops(stopsNames, false, choosenTime);
@@ -104,17 +115,9 @@ namespace Scheduling
             AntColonyClass.InitializePeopleInBus(tempPeopleIn.ToArray(), tempPeopleOut.ToArray());
             AntColonyClass.InitializeFeromons();
             var timetable = AntColonyClass.StartBuses();
-            var newTimeTable = new string[timetable.GetLength(0), timetable.GetLength(1)];
-            for (int i = 0; i < timetable.GetLength(0); i++)
-            {
-                for (int j = 0; j < timetable.GetLength(1); j++)
-                {
-                    newTimeTable[i, j] = DataConnector.
-                        ParseMinutesToTimeString(timetable[i,j]);
-                }
-            }
-            //SingleDeviceAlgorith.CalculateSchedule(tempPeopleIn.ToArray(),
-            //    tempPeopleOut.ToArray(), timetable, 0);
+            finalTimeTable = SingleDeviceAlgorith.CalculateSchedule(tempPeopleIn.ToArray(),
+                tempPeopleOut.ToArray(), timetable, departureMinutes);
+            
         }
     }
 }
