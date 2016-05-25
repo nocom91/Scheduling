@@ -116,7 +116,7 @@ namespace Scheduling
             AntColonyClass.InitializeFeromons();
             var timetable = AntColonyClass.StartBuses();
             finalTimeTable = SingleDeviceAlgorith.CalculateSchedule(tempPeopleIn.ToArray(),
-                tempPeopleOut.ToArray(), timetable, departureMinutes);
+                tempPeopleOut.ToArray(), timetable, departureMinutes, interval);
             
         }
     }

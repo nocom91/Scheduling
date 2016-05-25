@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Data;
 
 namespace Scheduling
 {
@@ -21,7 +22,8 @@ namespace Scheduling
     public partial class Results : Window
     {
         public double[,] timetable;
-        public List<Stop> selectedStops; 
+        public List<Stop> selectedStops;
+        private List<double[]> rows;
         public Results()
         {
             InitializeComponent();
@@ -29,25 +31,24 @@ namespace Scheduling
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            chart.ChartAreas.Add(new ChartArea("Timetables"));
+            var dt = new DataTable();
+            foreach (var stop in selectedStops)
+            {
+                dt.Columns.Add(stop.Name);
+            }
             for (int i = 0; i < timetable.GetLength(0); i++)
             {
-                chart.Series.Add(new Series('s'+i.ToString()));
-                chart.Series['s' + i.ToString()].ChartArea = "Timetables";
-                chart.Series['s' + i.ToString()].ChartType = SeriesChartType.Line;
-                var axisXdata = selectedStops.Select(x=>x.Name).ToArray();
-                var axisYdata = new double[timetable.GetLength(1)];
+                DataRow row = dt.NewRow();
                 for (int j = 0; j < timetable.GetLength(1); j++)
                 {
-                    axisYdata[j] = timetable[i, j];
+                    row[j] = DataConnector.ParseMinutesToTimeString(timetable[i,j]);
                 }
-                chart.Series['s' + i.ToString()].Points.DataBindXY(axisXdata, axisYdata);
+                dt.Rows.Add(row);
             }
-            //chart.Series["s1"].ChartArea = "Timetables";
-            //chart.Series["s1"].ChartType = SeriesChartType.Line;
-            //string[] axisXData = new string[] { "a", "b", "c" };
-            //double[] axisYData = new double[] { 0.1, 1.5, 1.9 };
-            //chart.Series["s1"].Points.DataBindXY(axisXData, axisYData);
+            simpleDataGrid.DataContext = dt.DefaultView;
+           
+
         }
+
     }
 }

@@ -4,15 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Scheduling"
-        xmlns:wf="clr-namespace:System.Windows.Input;assembly=System"
-        xmlns:wfi="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-        xmlns:dvc="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
         mc:Ignorable="d"
         Title="Результат" Height="300" Width="300" Loaded="Window_Loaded">
-    <StackPanel>
-        <WindowsFormsHost>
-            <dvc:Chart x:Name="chart"
-                       />
-        </WindowsFormsHost>
-    </StackPanel>
+    <Grid Margin="10,20,10,0">
+        <DataGrid Name="simpleDataGrid" ItemsSource="{Binding}" CanUserAddRows="False"
+                  CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False"
+                  CanUserResizeRows="False" CanUserSortColumns="False" IsReadOnly="True"
+                  ScrollViewer.CanContentScroll="True"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto">
+        </DataGrid>
+    </Grid>
 </Window>

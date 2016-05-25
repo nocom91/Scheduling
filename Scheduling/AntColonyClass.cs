@@ -77,8 +77,6 @@ namespace Scheduling
             for (int i = timeStart; i < timeEnd; i++)
                 for (int j = 0; j < stopNumber; j++)
                 {
-                    //peopleAmount[i, j] = (int)peopleIN[j];
-                    //peopleAmountOut[i, j] = (int)peopleOUT[j];
                     sumIn += (int)peopleIN[j];
                     sumOut += (int)peopleOUT[j];
                 }
@@ -159,8 +157,8 @@ namespace Scheduling
                         if (bus.NextStation >= stopNumber)
                         {
                             temp_variable = bus.Number;
-                            buses.Remove(bus);
-                            vehicleNumber++;
+                            //buses.Remove(bus);
+                            //vehicleNumber++;
                         }
                         else
                         {

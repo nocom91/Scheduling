@@ -11,17 +11,19 @@ namespace Scheduling
         private static double timeForDoors = 0.03; //Время открывания и закрывания дверей
         private static double timePassengerInOut = 0.05; //Время на вход или выход из ТС одного пассажира
         public static double[,] CalculateSchedule(int?[] passengersIN, int?[] passengersOUT,
-            double[,] timetable, double departureTime)
+            double[,] timetable, double departureTime, int intervalDefault)
         {
             var times = new double[timetable.GetLength(0), timetable.GetLength(1)];
             double interval;
             for (int j=0; j<timetable.GetLength(0); j++)
             {
-                interval = departureTime;
-                for (int i = 0; i < passengersIN.Count(); i++)
+                interval = departureTime + j*intervalDefault;
+                times[j, 0] = interval;
+                for (int i = 1; i < passengersIN.Count(); i++)
                 {
-                    interval += ((int)(passengersIN[i] + passengersOUT[i])) * timePassengerInOut/2 +
-                    2 * timeForDoors+timetable[j,i] +0.4*timetable[j, i];
+                    interval += ((int)(passengersIN[i-1] + passengersOUT[i-1])) * 
+                        timePassengerInOut/2 +
+                    2 * timeForDoors+timetable[j,i-1] +0.4*timetable[j, i-1];
                     times[j, i] = interval;
                 }
             }
