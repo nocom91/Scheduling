@@ -130,7 +130,7 @@
     <Compile Include="Time.cs">
       <DependentUpon>SchedulingModel.tt</DependentUpon>
     </Compile>
-    <Page Include="StartWindows.xaml">
+    <Page Include="StartWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -138,8 +138,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="StartWindows.xaml.cs">
-      <DependentUpon>StartWindows.xaml</DependentUpon>
+    <Compile Include="StartWindow.xaml.cs">
+      <DependentUpon>StartWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Results.xaml">

@@ -20,13 +20,12 @@ namespace Scheduling
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class StartWindow : Window
     {
-        SchedulingEntities dbContext;
-        private string choosenTime;
+        private string chosenTime;
         private double[,] finalTimeTable;
         private List<Stop> stops;
-        public MainWindow()
+        public StartWindow()
         {
             InitializeComponent();
 
@@ -47,7 +46,7 @@ namespace Scheduling
         private void timesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedValue = ((ComboBox)sender).SelectedValue;
-            choosenTime = selectedValue.ToString();
+            chosenTime = selectedValue.ToString();
         }
 
         private void calculate_Click(object sender, RoutedEventArgs e)
@@ -79,15 +78,15 @@ namespace Scheduling
                 stops.Add(tempStop);
             }
             var stopsNames = stops.Select(x => x.Name).ToArray();
-            var tempSpeed = DataConnector.GetVehicleSpeedsByStops(stopsNames, false, choosenTime);
+            var tempSpeed = DataConnector.GetVehicleSpeedsByStops(stopsNames, false, chosenTime);
             var tempDistance = DataConnector.GetDistancesBetweenStops(stopsNames);
             var optTime = new List<double?>();
             for (int i = 0; i < stops.Count; i++)
             {
                 optTime.Add(tempDistance[i] / tempSpeed[i]);
             }
-            var tempPeopleIn = DataConnector.GetAmountOfPeopleIN(stopsNames, choosenTime);
-            var tempPeopleOut = DataConnector.GetAmountOfPeopleOUT(stopsNames, choosenTime);
+            var tempPeopleIn = DataConnector.GetAmountOfPeopleIN(stopsNames, chosenTime);
+            var tempPeopleOut = DataConnector.GetAmountOfPeopleOUT(stopsNames, chosenTime);
             int sumPeopleIn = 0, sumPeopleOut = 0;
             for (int i = 0; i < stopsNames.Count(); i++)
             {
@@ -97,7 +96,7 @@ namespace Scheduling
             var newKeySector = new KeySector(sumPeopleIn, sumPeopleOut, 50, interval);
             var amountofBuses = newKeySector.BusNumber();
             AntColonyClass.vehicleNumber = amountofBuses;
-            var choosenInterval = choosenTime.Split('-', ':');
+            var choosenInterval = chosenTime.Split('-', ':');
             int startTime = Int32.Parse(choosenInterval[0]) * 60 + Int32.Parse(choosenInterval[1]);
             AntColonyClass.InitializeVariables(stopsNames.Count(), startTime);
             AntColonyClass.InitializeIntervals(optTime.ToArray());

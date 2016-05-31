@@ -10,7 +10,7 @@ namespace Scheduling
 
     public static class DataConnector
     {
-        static SchedulingEntities dbContext;
+        private static SchedulingEntities dbContext;
         public static List<double> GetVehicleSpeedsByStops(string[] stops, bool direction, string time)
         {
             dbContext = new SchedulingEntities();
