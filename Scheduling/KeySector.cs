@@ -31,7 +31,7 @@ namespace Scheduling
 
         public int BusNumber()
         {
-            return (int)Math.Ceiling((this.WorkingHours * BetaCoefficient()) / this.Interval);
+            return (int)Math.Ceiling(((this.WorkingHours * BetaCoefficient()) / this.Interval)+1);
         }
     }
 }

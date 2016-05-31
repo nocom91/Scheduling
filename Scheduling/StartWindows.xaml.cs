@@ -34,24 +34,14 @@ namespace Scheduling
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            dbContext = new SchedulingEntities();
-            var query = from route in dbContext.Routes
-                        select route.Name;
-            routesList.ItemsSource = query.ToList();
-            query = from time in dbContext.Times
-                    orderby time.Minutes ascending
-                    select time.Name;
-            timesList.ItemsSource = query.ToList();
+            routesList.ItemsSource = DataConnector.GetRoutesList();
+            timesList.ItemsSource = DataConnector.GetTimesList();
         }
 
         private void routesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            dbContext = new SchedulingEntities();
             var selectedValue = ((ComboBox)sender).SelectedValue;
-            var temp = dbContext.Stops.OrderBy(x => x.ID).Select(x => x).Where(x => x.Route == (
-                  dbContext.Routes.FirstOrDefault(y => y.Name == selectedValue.ToString())
-              )).ToList();
-            dataGridStops.ItemsSource = temp;
+            dataGridStops.ItemsSource = DataConnector.GetStopsOfARoute(selectedValue);
         }
 
         private void timesList_SelectionChanged(object sender, SelectionChangedEventArgs e)

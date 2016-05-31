@@ -67,6 +67,31 @@ namespace Scheduling
             return peopleAmountOut;
         }
 
+        public static List<String> GetRoutesList()
+        {
+            dbContext = new SchedulingEntities();
+            var query = from route in dbContext.Routes
+                        select route.Name;
+            return query.ToList();
+        }
+        public static List<string> GetTimesList()
+        {
+            dbContext = new SchedulingEntities();
+            var query = from time in dbContext.Times
+                    orderby time.Minutes ascending
+                    select time.Name;
+            return query.ToList();
+        }
+
+        public static List<Stop> GetStopsOfARoute(object selectedValue)
+        {
+            dbContext = new SchedulingEntities();
+            var temp = dbContext.Stops.OrderBy(x => x.ID).Select(x => x).Where(x => x.Route == (
+                  dbContext.Routes.FirstOrDefault(y => y.Name == selectedValue.ToString())
+              )).ToList();
+            return temp;
+        }
+
         public static int ParseTimeToMinutes(string time)
         {
             int timeInMinutes = 0;
