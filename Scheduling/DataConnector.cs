@@ -86,7 +86,8 @@ namespace Scheduling
         public static List<Stop> GetStopsOfARoute(object selectedValue)
         {
             dbContext = new SchedulingEntities();
-            var temp = dbContext.Stops.OrderBy(x => x.ID).Select(x => x).Where(x => x.Route == (
+            var temp = dbContext.Stops.OrderBy(x => x.ID).Select(x => x).
+                Where(x => x.Route == (
                   dbContext.Routes.FirstOrDefault(y => y.Name == selectedValue.ToString())
               )).ToList();
             return temp;

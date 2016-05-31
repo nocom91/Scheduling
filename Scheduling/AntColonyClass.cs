@@ -41,7 +41,7 @@ namespace Scheduling
             amountOfPossibleIntervals = 9;
             possibleIntervals = new double[routeNumber, stopNumber - 1, amountOfPossibleIntervals];
             timeOpt = new double[routeNumber, stopNumber - 1];
-            variation = 0.2;
+            variation = 0.3;
             departureTime = new int[vehicleNumber];
             buses = new List<Bus>();
             peopleAmount = new int[timeEnd, stopNumber];
@@ -82,11 +82,12 @@ namespace Scheduling
                 }
             sumIn = (double)sumIn / 60;
             sumOut = (double)sumOut / 60;
+            var rand = new Random();
             for (int i = timeStart; i < timeEnd; i++)
                 for (int j = 0; j < stopNumber; j++)
                 {
-                    peopleAmount[i, j] = (int)sumIn;
-                    peopleAmountOut[i, j] = (int)sumOut;
+                    peopleAmount[i, j] = (int)(sumIn*(rand.NextDouble()+0.5));
+                    peopleAmountOut[i, j] = (int)(sumOut*(rand.NextDouble()+0.5));
                 }
         }
         //Инициализируются феромоны. Изначально пассажиры не собраны и феромоны не отложены

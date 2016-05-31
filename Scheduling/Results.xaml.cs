@@ -23,7 +23,6 @@ namespace Scheduling
     {
         public double[,] timetable;
         public List<Stop> selectedStops;
-        private List<double[]> rows;
         public Results()
         {
             InitializeComponent();
