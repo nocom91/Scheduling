@@ -82,10 +82,11 @@ namespace Scheduling
                 }
             sumIn = (double)sumIn / 60;
             sumOut = (double)sumOut / 60;
-            var rand = new Random();
+            Random rand;
             for (int i = timeStart; i < timeEnd; i++)
                 for (int j = 0; j < stopNumber; j++)
                 {
+                    rand = new Random();
                     peopleAmount[i, j] = (int)(sumIn*(rand.NextDouble()+0.5));
                     peopleAmountOut[i, j] = (int)(sumOut*(rand.NextDouble()+0.5));
                 }
